@@ -4,7 +4,7 @@
 
 **DOCGenius** یک ابزار تحت وب و قدرتمend است که به شما اجازه می‌دهد اسناد فنی، آموزشی و راهنماهای زیبا را به صورت **ماژولار و بدون نیاز به یک خط کدنویسی** بسازید. خروجی نهایی، یک فایل HTML مستقل، سبک و کاملاً واکنش‌گراست که می‌توانید آن را در هر جایی به اشتراک بگذارید.
 
-[![DOCGenius Demo](https://img.shields.io/badge/Live%20Demo-Try%20DOCGenius%20Now!-brightgreen?style=for-the-badge&logo=github)](https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/)
+[![DOCGenius Demo](https://img.shields.io/badge/Live%20Demo-Try%20DOCGenius%20Now!-brightgreen?style=for-the-badge&logo=github)](https://hiuuu.github.io/DOCGenius/)
 
 ---
 

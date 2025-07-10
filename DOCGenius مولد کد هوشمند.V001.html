@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeGenius - مولد کد هوشمند</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/ui/trumbowyg.min.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd; --secondary-color: #6c757d; --success-color: #198754;
+            --danger-color: #dc3545; --light-bg: #f8f9fa; --dark-text: #212529;
+            --border-color: #dee2e6; --example-bg: #ffffff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6; background-color: #e9ecef; color: var(--dark-text); padding: 20px;
+        }
+        .generator-container {
+            max-width: 950px; margin: 0 auto; background-color: #fff;
+            padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1, h2 { color: var(--dark-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px; }
+        h1 small { font-size: 1rem; color: var(--secondary-color); }
+        .block-editor, .settings-box {
+            border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; position: relative; background-color: var(--light-bg);
+        }
+        .example-editor {
+            background-color: var(--example-bg); border: 1px dashed var(--border-color);
+            border-radius: 8px; padding: 20px; margin-right: 25px; margin-top: 15px; position: relative;
+        }
+        label { font-weight: 600; display: block; margin-bottom: 5px; }
+        input, textarea, select {
+            width: 100%; padding: 10px; border-radius: 5px;
+            border: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; margin-bottom: 15px;
+        }
+        .code-input { direction: ltr; text-align: left; font-family: monospace; }
+        .form-row { display: flex; gap: 15px; align-items: flex-end; }
+        .form-row > div { flex: 1; }
+        .remove-btn {
+            position: absolute; top: 15px; left: 15px; background-color: var(--danger-color);
+            color: white; border: none; border-radius: 50%; width: 30px; height: 30px;
+            cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            line-height: 1; transition: background-color 0.2s ease; z-index: 10;
+        }
+        .remove-btn:hover { background-color: #c82333; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-secondary-custom { background-color: #5a6268; color: white; font-size: 0.9rem; padding: 8px 15px; }
+        #output-code { width: 100%; min-height: 300px; font-family: monospace; direction: ltr; text-align: left; padding: 15px; border-radius: 5px; border: 1px solid var(--border-color); background-color: #2b303b; color: #c0c5ce; margin-top: 20px; }
+        .trumbowyg-box { margin-bottom: 15px !important; }
+        .generator-footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: #6c757d; }
+        .generator-footer a { color: var(--primary-color); text-decoration: none; }
+        .generator-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="generator-container">
+        <h1>CodeGenius <small>مولد کد هوشمند</small></h1>
+        <p>بلوک‌ها و مثال‌های خود را بسازید، تنظیمات را وارد کنید و کد نهایی را دریافت نمایید.</p>
+        
+        <div id="blocks-container"></div>
+        <button id="add-main-block-btn" class="btn btn-primary" style="width: 100%;">افزودن بلوک اصلی (+)</button>
+        
+        <div class="settings-box" style="margin-top: 30px;">
+            <h4>تنظیمات فایل خروجی</h4>
+            <label for="footer-text-input">متن فوتر (اختیاری)</label>
+            <input type="text" id="footer-text-input" placeholder="متن کپی‌رایت..." value="&copy; 2024 - hamed.zandieh@gmail.com">
+        </div>
+        
+        <hr style="margin: 30px 0;">
+        <h2>خروجی نهایی</h2>
+        <button id="generate-btn" class="btn btn-success" style="width: 100%;">1. تولید کد نهایی HTML</button>
+        <textarea id="output-code" readonly placeholder="کد نهایی در اینجا نمایش داده می‌شود..."></textarea>
+        <button id="copy-output-btn" class="btn" style="width: 100%; margin-top: 10px; background-color: var(--secondary-color); color:white;">2. کپی کد نهایی</button>
+        
+        <footer class="generator-footer">
+            <p>طراحی و توسعه توسط <a href="mailto:hamed.zandieh@gmail.com" target="_blank">حامد زندیه</a></p>
+        </footer>
+    </div>
+
+    <!-- Templates -->
+    <template id="main-block-template">
+        <div class="block-editor">
+            <button class="remove-btn" title="حذف بلوک اصلی">&times;</button>
+            <h4>بلوک اصلی</h4>
+            <div class="form-row">
+                <div><label>عنوان</label><input type="text" class="title-input"></div>
+                <div><label>جهت‌گیری</label><select class="block-dir-select"><option value="rtl" selected>راست به چپ</option><option value="ltr">چپ به راست</option></select></div>
+            </div>
+            <label>توضیحات</label><textarea class="description-input"></textarea>
+            <label>کد</label><textarea class="code-input"></textarea>
+            <hr><div class="examples-container"></div>
+            <button class="add-example-btn btn btn-secondary-custom">افزودن مثال به این بلوک</button>
+        </div>
+    </template>
+    <template id="example-block-template">
+        <div class="example-editor">
+            <button class="remove-btn" title="حذف مثال">&times;</button>
+            <h5>مثال</h5>
+            <label>عنوان مثال</label><input type="text" class="title-input">
+            <label>توضیحات مثال</label><textarea class="description-input"></textarea>
+            <label>کد مثال</label><textarea class="code-input"></textarea>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/trumbowyg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/langs/fa.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const blocksContainer = document.getElementById('blocks-container');
+            const mainBlockTemplate = document.getElementById('main-block-template');
+            const exampleBlockTemplate = document.getElementById('example-block-template');
+
+            function initTrumbowyg(element) {
+                try {
+                    if (jQuery && jQuery.fn.trumbowyg) {
+                        $(element).trumbowyg({ lang: 'fa', btns: [['viewHTML'],['undo','redo'],['strong','em'],['link'],['unorderedList','orderedList'],['removeformat']] });
+                    }
+                } catch (e) { console.warn('Trumbowyg failed to load.'); }
+            }
+            function addMainBlock() {
+                const clone = mainBlockTemplate.content.cloneNode(true);
+                blocksContainer.appendChild(clone);
+                initTrumbowyg(blocksContainer.lastElementChild.querySelector('.description-input'));
+            }
+            document.getElementById('add-main-block-btn').addEventListener('click', addMainBlock);
+            addMainBlock();
+
+            blocksContainer.addEventListener('click', (e) => {
+                if (e.target.matches('.remove-btn')) {
+                    e.target.closest('.block-editor, .example-editor').remove();
+                } else if (e.target.matches('.add-example-btn')) {
+                    const examplesContainer = e.target.previousElementSibling;
+                    const clone = exampleBlockTemplate.content.cloneNode(true);
+                    examplesContainer.appendChild(clone);
+                    initTrumbowyg(examplesContainer.lastElementChild.querySelector('.description-input'));
+                }
+            });
+
+            document.getElementById('generate-btn').addEventListener('click', () => {
+                let finalHtml = '';
+                document.querySelectorAll('.block-editor').forEach(mainBlockEditor => {
+                    const baseHue = Math.floor(Math.random() * 360);
+                    const mainBgColor = `hsl(${baseHue}, 100%, 97%)`;
+
+                    const mainDir = mainBlockEditor.querySelector('.block-dir-select').value;
+                    const mainTitle = mainBlockEditor.querySelector('.title-input').value.trim();
+                    const mainCode = mainBlockEditor.querySelector('.code-input').value.trim();
+                    const mainDescTextarea = mainBlockEditor.querySelector('.description-input');
+                    const mainDesc = $(mainDescTextarea).data('trumbowyg') ? $(mainDescTextarea).trumbowyg('html') : mainDescTextarea.value.trim().replace(/\n/g, '<br />');
+
+                    let examplesHtml = '';
+                    mainBlockEditor.querySelectorAll('.example-editor').forEach(exampleEditor => {
+                        const exampleBgColor = `hsl(${baseHue}, ${90 + Math.floor(Math.random() * 10)}%, ${90 + Math.floor(Math.random() * 5)}%)`;
+                        const exTitle = exampleEditor.querySelector('.title-input').value.trim();
+                        const exCode = exampleEditor.querySelector('.code-input').value.trim();
+                        const exDescTextarea = exampleEditor.querySelector('.description-input');
+                        const exDesc = $(exDescTextarea).data('trumbowyg') ? $(exDescTextarea).trumbowyg('html') : exDescTextarea.value.trim().replace(/\n/g, '<br />');
+                        
+                        if (exTitle || (exDesc && exDesc !== "<p><br></p>") || exCode) {
+                            const exTitleHtml = exTitle ? `<h5 class="description-title">${exTitle}</h5>` : '';
+                            const exDescHtml = (exDesc && exDesc !== "<p><br></p>") ? `<div class="description-content">${exDesc}</div>` : '';
+                            const exCodeHtml = exCode ? `<div class="code-block"><button class="copy-button">کپی</button><pre><code>${exCode.replace(/</g, '&lt;')}</code></pre></div>` : '';
+                            const exDescriptionSection = (exTitleHtml || exDescHtml) ? `<div class="description">${exTitleHtml}${exDescHtml}</div>` : '';
+                            examplesHtml += `<div class="example-wrapper" style="background-color: ${exampleBgColor};">${exDescriptionSection}${exCodeHtml}</div>`;
+                        }
+                    });
+                    
+                    if (mainTitle || (mainDesc && mainDesc !== "<p><br></p>") || mainCode || examplesHtml) {
+                        const mainTitleHtml = mainTitle ? `<h4 class="description-title">${mainTitle}</h4>` : '';
+                        const mainDescHtml = (mainDesc && mainDesc !== "<p><br></p>") ? `<div class="description-content">${mainDesc}</div>` : '';
+                        const mainCodeHtml = mainCode ? `<div class="code-block"><button class="copy-button">کپی</button><pre><code>${mainCode.replace(/</g, '&lt;')}</code></pre></div>` : '';
+                        const mainDescriptionSection = (mainTitleHtml || mainDescHtml) ? `<div class="description">${mainTitleHtml}${mainDescHtml}</div>` : '';
+                        const examplesSectionTitle = mainTitle ? `مثال‌ها برای: ${mainTitle}` : 'مثال‌ها';
+                        const examplesSection = examplesHtml ? `<div class="examples-section"><h5 class="examples-section-title">${examplesSectionTitle}</h5>${examplesHtml}</div>` : '';
+
+                        finalHtml += `<div class="main-wrapper" dir="${mainDir}" style="background-color: ${mainBgColor};">${mainDescriptionSection}${mainCodeHtml}${examplesSection}</div>`;
+                    }
+                });
+
+                // --- Build Footer ---
+                const footerUserInput = document.getElementById('footer-text-input').value.trim();
+                let footerHtml = '';
+                if (footerUserInput) {
+                    footerHtml = `
+        <footer class="output-footer">
+            <p>${footerUserInput}</p>
+            <p class="credits">ساخته شده با CodeGenius</p>
+        </footer>`;
+                }
+
+                document.getElementById('output-code').value = getFinalHtmlTemplate(finalHtml.trim(), footerHtml);
+            });
+
+            document.getElementById('copy-output-btn').addEventListener('click', (e) => {
+                const btn = e.target;
+                document.getElementById('output-code').select();
+                document.execCommand('copy');
+                btn.innerText = 'کپی شد!';
+                setTimeout(() => { btn.innerText = '2. کپی کد نهایی'; }, 2000);
+            });
+
+            function getFinalHtmlTemplate(content, footer) {
+                const minifiedCSS = `*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;background-color:#f8f9fa;color:#212529;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}.container{background-color:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.08);max-width:800px;width:90%}.main-wrapper{padding:20px;margin-bottom:25px;border-radius:10px;border:1px solid #e0e0e0}.main-wrapper:last-child{margin-bottom:0}.description{margin-bottom:15px}.description-title{font-size:1.2rem;font-weight:600;color:#343a40;margin-bottom:8px}.description-content{color:#495057;line-height:1.7}.description-content p,.description-content ul,.description-content ol{margin-bottom:10px}.code-block{background-color:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.07);border-radius:8px;padding:15px;overflow:hidden;direction:ltr;text-align:left;position:relative;margin-top:15px}.description+.code-block{margin-top:0}.code-block pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;font-size:.9rem;color:#343a40;overflow-x:auto;padding-top:10px;background:transparent!important}.copy-button{position:absolute;top:10px;right:10px;background-color:#6c757d;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:.85rem;cursor:pointer;opacity:.7;transition:opacity .2s ease,background-color .2s ease}.code-block:hover .copy-button{opacity:1}.copy-button.copied{background-color:#198754;opacity:1}.copy-button:disabled{cursor:default}.examples-section{margin-top:25px;padding:20px;border-top:3px solid rgba(0,0,0,0.08);background-color:rgba(0,0,0,0.02);border-radius:8px}.examples-section-title{font-size:1.1rem;margin-bottom:20px;color:#333}h5.description-title{font-size:1rem;font-weight:600}.example-wrapper{padding:15px;border-radius:8px;margin-bottom:15px;border:1px solid rgba(0,0,0,.05)}.example-wrapper:last-child{margin-bottom:0}.output-footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #e9ecef;font-size:.85rem;color:#6c757d}.output-footer p{margin:0}.output-footer .credits{font-size:.8rem;margin-top:5px}`;
+                const minifiedJS = `function fallbackCopyTextToClipboard(e){const t=document.createElement("textarea");t.value=e,t.style.position="fixed",t.style.top="-9999px",t.style.left="-9999px",t.style.opacity="0",t.setAttribute("readonly",""),document.body.appendChild(t),t.select();let o=!1;try{o=document.execCommand("copy")}catch(e){console.error("Fallback copy failed:",e)}return document.body.removeChild(t),o}document.querySelectorAll(".copy-button").forEach(e=>{const t=e.innerText;e.addEventListener("click",()=>{const o=e.closest(".code-block").querySelector("pre code");if(!o)return;const c=o.innerText;function n(o,n){e.innerText=o,e.classList.add(n),e.disabled=!0,setTimeout(()=>{e.innerText=t,e.classList.remove(n),e.disabled=!1},2e3)}navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(c).then(()=>n("کپی شد!","copied"),()=>{fallbackCopyTextToClipboard(c)?n("کپی شد!","copied"):n("خطا!","error")}):fallbackCopyTextToClipboard(c)?n("کپی شد!","copied"):n("خطا!","error")})});`;
+                return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>نمایش کد</title><style>${minifiedCSS}</style></head><body><div class="container">${content}${footer}</div><script>${minifiedJS}<\/script></body></html>`;
+            }
+        });
+    </script>
+</body>
+</html>

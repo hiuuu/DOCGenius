@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد اسناد HTML ماژولار</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/ui/trumbowyg.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5; --secondary-color: #64748b; --success-color: #16a34a;
+            --danger-color: #dc2626; --light-bg: #f8f9fa; --dark-text: #1f2937;
+            --border-color: #e5e7eb; --header-bg: #f9fafb;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; background-color: #0f172a; color: var(--dark-text); padding: 20px; }
+        .generator-container { max-width: 950px; margin: 20px auto; background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        h1 { border-bottom: none; margin: 0; padding: 0; font-size: 1.8rem; }
+        h1 small { font-size: 1rem; color: var(--secondary-color); }
+        
+        .main-branch-editor { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 25px; background-color: var(--light-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        .sub-branch-editor { background-color: #fff; border-style: dashed; border-color: #d1d5db; margin-top: 20px; }
+        
+        .block-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); }
+        .block-header h4, .block-header h5 { margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--dark-text); }
+        .block-header-controls { display: flex; align-items: center; gap: 10px; }
+        .block-content { padding: 20px; }
+        
+        .content-section { border: 1px dashed #d1d5db; border-radius: 8px; padding: 15px; margin-top: 15px; position: relative; background-color: #fff; }
+        .main-branch-editor .content-section { background-color: #f9fafb; }
+        .content-section .remove-content-btn { position: absolute; top: 8px; left: 8px; }
+        
+        label { font-weight: 600; display: block; margin-bottom: 8px; color: #4b5563; }
+        input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db; font-family: inherit; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+        input:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); outline: none; }
+        .code-input { direction: ltr; text-align: left; font-family: "SFMono-Regular", Consolas, monospace; background-color: #1e293b; color: #e2e8f0; }
+        
+        .btn, .icon-btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-lg { padding: 14px 28px; font-size: 1.1rem; }
+        .btn-sm { font-size: 0.85rem; padding: 6px 12px; border-radius: 999px; /* Pill shape */ }
+        .btn:hover, .icon-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-success { background: linear-gradient(45deg, var(--success-color), #22c55e); color: white; }
+        .btn-secondary { background-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background-color: #cbd5e1; }
+        .icon-btn { background: none; padding: 5px; width: 34px; height: 34px; border-radius: 50%; }
+        .icon-btn svg { width: 20px; height: 20px; }
+        .remove-btn, .remove-content-btn { color: var(--danger-color); }
+        .icon-btn:hover { background-color: rgba(0,0,0,0.05); }
+
+        .toggle-switch { display: flex; align-items: center; gap: 8px; background-color: #e5e7eb; padding: 4px; border-radius: 99px; }
+        .toggle-switch-btn { padding: 4px 10px; font-size: 0.8rem; font-weight: 500; border-radius: 99px; color: #6b7280; cursor: pointer; }
+        .toggle-switch-btn.active { background-color: #fff; color: var(--primary-color); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        .settings-box, .output-section { margin-top: 40px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .settings-box { padding: 20px; background-color: var(--light-bg); }
+        .output-header, .settings-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--header-bg); }
+        .output-header h2, .settings-header h4 { margin: 0; border: none; padding: 0; font-size: 1.3rem; }
+        #output-code { width: 100%; min-height: 300px; font-family: monospace; direction: ltr; text-align: left; padding: 15px; border-radius: 0; border: none; border-top: 1px solid var(--border-color); background-color: #1e293b; color: #e2e8f0; }
+        #output-code:focus { box-shadow: none; }
+        .generator-footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="generator-container">
+        <header class="main-header">
+            <h1>مولد اسناد HTML ماژولار</h1>
+        </header>
+
+        <div id="blocks-container"></div>
+        
+        <button id="add-main-branch-btn" class="btn btn-primary" style="width: 100%;">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            افزودن شاخه اصلی
+        </button>
+        
+        <div class="settings-box">
+            <div class="settings-header" style="padding: 0; background: none; border: none; margin-bottom: 15px;"><h4 style="font-size:1.2rem;">تنظیمات فایل خروجی</h4></div>
+            <label for="footer-text-input">متن فوتر (اختیاری)</label>
+            <input type="text" id="footer-text-input" placeholder="متن کپی‌رایت..." value="&copy; 2024 - hamed.zandieh@gmail.com">
+        </div>
+        
+        <section class="output-section">
+            <header class="output-header">
+                <h2>خروجی نهایی</h2>
+                <button id="generate-btn" class="btn btn-success btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                    تولید و کپی کد
+                </button>
+            </header>
+            <textarea id="output-code" readonly placeholder="برای مشاهده و کپی خروجی، روی دکمه 'تولید و کپی کد' کلیک کنید..."></textarea>
+        </section>
+
+        <footer class="generator-footer"><p>طراحی و توسعه توسط <a href="mailto:hamed.zandieh@gmail.com" target="_blank" style="color:var(--primary-color); text-decoration:none;">حامد زندیه</a></p></footer>
+    </div>
+    
+    <!-- TEMPLATES -->
+    <template id="main-branch-template">
+        <div class="main-branch-editor">
+            <div class="block-header">
+                <h4>شاخه اصلی</h4>
+                <div class="block-header-controls">
+                    <button class="add-content-btn btn-sm" data-type="description" style="background-color: #e0e7ff; color: #3730a3;">+ توضیحات</button>
+                    <button class="add-content-btn btn-sm" data-type="code" style="background-color: #d1fae5; color: #065f46;">+ کد</button>
+                    <div class="toggle-switch"><button class="toggle-switch-btn" data-dir="ltr">LTR</button><button class="toggle-switch-btn active" data-dir="rtl">RTL</button></div>
+                    <button class="remove-btn icon-btn" title="حذف شاخه"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                </div>
+            </div>
+            <div class="block-content">
+                <label>عنوان شاخه اصلی</label><input type="text" class="title-input">
+                <div class="dynamic-content-container"></div>
+                <div class="sub-branches-container"></div>
+                <div class="sub-branches-title-input-container" style="display: none;">
+                    <label>عنوان بخش زیرشاخه‌ها (اختیاری)</label>
+                    <input type="text" class="sub-branches-title-input">
+                </div>
+                <div style="text-align: left; margin-top: 15px;"><button class="add-sub-branch-btn btn btn-secondary" style="font-size: 0.9rem; padding: 8px 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>افزودن زیرشاخه</button></div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="sub-branch-template">
+        <div class="sub-branch-editor">
+            <div class="block-header">
+                <h5>زیرشاخه</h5>
+                <div class="block-header-controls">
+                    <button class="add-content-btn btn-sm" data-type="description" style="background-color: #e0e7ff; color: #3730a3;">+ توضیحات</button>
+                    <button class="add-content-btn btn-sm" data-type="code" style="background-color: #d1fae5; color: #065f46;">+ کد</button>
+                    <div class="toggle-switch"><button class="toggle-switch-btn" data-dir="ltr">LTR</button><button class="toggle-switch-btn active" data-dir="rtl">RTL</button></div>
+                    <button class="remove-btn icon-btn" title="حذف زیرشاخه"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                </div>
+            </div>
+            <div class="block-content" style="padding: 15px 20px 20px;">
+                <label>عنوان زیرشاخه</label><input type="text" class="title-input">
+                <div class="dynamic-content-container"></div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="description-section-template">
+        <div class="content-section description-editor"><button class="remove-content-btn icon-btn" title="حذف توضیحات"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><label>توضیحات</label><textarea class="description-input"></textarea></div>
+    </template>
+    
+    <template id="code-section-template">
+        <div class="content-section code-editor"><button class="remove-content-btn icon-btn" title="حذف کد"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><label>کد</label><textarea class="code-input"></textarea></div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/trumbowyg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/plugins/colors/trumbowyg.colors.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.27.3/dist/langs/fa.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            $.extend(true, $.trumbowyg, { plugins: { base64: { init: function (trumbowyg) { trumbowyg.addBtnDef('base64Image', { ico: 'insertImage', fn: function () { trumbowyg.saveRange(); const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.onchange = () => { if (fileInput.files && fileInput.files[0]) { const reader = new FileReader(); reader.onload = (e) => { trumbowyg.restoreRange(); const imgHtml = `<img src="${e.target.result}" style="max-width: 100%; height: auto; border-radius: 4px;" alt="">`; trumbowyg.execCmd('insertHtml', imgHtml); }; reader.readAsDataURL(fileInput.files[0]); } document.body.removeChild(fileInput); }; document.body.appendChild(fileInput).click(); } }); } } } });
+            function initTrumbowyg(element) { try { if (jQuery && jQuery.fn.trumbowyg) { $(element).trumbowyg({ lang: 'fa', btns: [['viewHTML'],['undo','redo'],['formatting'],['strong','em','del'],['foreColor','backColor'],['link'],['base64Image'],['justifyLeft','justifyCenter','justifyRight','justifyFull'],['unorderedList','orderedList'],['horizontalRule'],['removeformat']] }); } } catch (e) { console.warn('Trumbowyg failed to load.'); } }
+            
+            const blocksContainer = document.getElementById('blocks-container');
+            const mainBranchTemplate = document.getElementById('main-branch-template');
+            const subBranchTemplate = document.getElementById('sub-branch-template');
+            const descriptionTemplate = document.getElementById('description-section-template');
+            const codeTemplate = document.getElementById('code-section-template');
+            
+            function addBlock(template, container) {
+                const newBlock = template.content.cloneNode(true);
+                container.appendChild(newBlock);
+                const newBlockElement = container.lastElementChild;
+                newBlockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return newBlockElement;
+            }
+            document.getElementById('add-main-branch-btn').addEventListener('click', () => addBlock(mainBranchTemplate, blocksContainer));
+            addBlock(mainBranchTemplate, blocksContainer);
+
+            blocksContainer.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('button');
+                if (!targetBtn) return;
+                const parentBlock = targetBtn.closest('.main-branch-editor, .sub-branch-editor');
+                if (targetBtn.matches('.remove-btn')) { parentBlock.remove(); return; }
+                
+                if (targetBtn.matches('.add-content-btn')) {
+                    const contentContainer = parentBlock.querySelector('.dynamic-content-container');
+                    const type = targetBtn.dataset.type;
+                    const template = type === 'description' ? descriptionTemplate : codeTemplate;
+                    const clone = template.content.cloneNode(true);
+                    contentContainer.appendChild(clone);
+                    if (type === 'description') initTrumbowyg(contentContainer.lastElementChild.querySelector('.description-input'));
+                } else if (targetBtn.matches('.add-sub-branch-btn')) {
+                    const subBranchesContainer = parentBlock.querySelector('.sub-branches-container');
+                    const newSubBranch = addBlock(subBranchTemplate, subBranchesContainer);
+                    parentBlock.querySelector('.sub-branches-title-input-container').style.display = 'block';
+                    const parentDir = parentBlock.querySelector('.toggle-switch').dataset.dir;
+                    if (parentDir === 'ltr') {
+                        const newToggle = newSubBranch.querySelector('[data-dir="ltr"]');
+                        newToggle.click();
+                    }
+                } else if (targetBtn.matches('.remove-content-btn')) {
+                    targetBtn.closest('.content-section').remove();
+                } else if (targetBtn.matches('.toggle-switch-btn')) {
+                    const toggleSwitch = targetBtn.parentElement;
+                    toggleSwitch.querySelectorAll('.toggle-switch-btn').forEach(btn => btn.classList.remove('active'));
+                    targetBtn.classList.add('active');
+                    const newDir = targetBtn.dataset.dir;
+                    toggleSwitch.dataset.dir = newDir;
+                    const block = targetBtn.closest('.main-branch-editor, .sub-branch-editor');
+                    block.querySelector('.title-input').dir = newDir;
+                    $(block.querySelector('.dynamic-content-container')).find('.description-input').each(function() {
+                        $(this).parent().find('.trumbowyg-editor, .trumbowyg-textarea').attr('dir', newDir);
+                    });
+                }
+            });
+            
+            function generateContentSectionsHtml(container) {
+                let html = '';
+                container.querySelectorAll(':scope > .content-section').forEach(section => {
+                    if (section.matches('.description-editor')) {
+                        const descTextarea = section.querySelector('.description-input');
+                        const desc = $(descTextarea).data('trumbowyg') ? $(descTextarea).trumbowyg('html') : descTextarea.value.trim().replace(/\n/g, '<br />');
+                        if (desc && desc !== "<p><br></p>") html += `<div class="description-content">${desc}</div>`;
+                    } else if (section.matches('.code-editor')) {
+                        const code = section.querySelector('.code-input').value.trim();
+                        if (code) html += `<div class="code-block"><button class="copy-button">کپی</button><pre><code>${code.replace(/</g, '&lt;')}</code></pre></div>`;
+                    }
+                });
+                return html;
+            }
+
+            document.getElementById('generate-btn').addEventListener('click', (e) => {
+                let finalHtml = '';
+                let currentHue = Math.random();
+                const GOLDEN_RATIO = 0.61803398875;
+                document.querySelectorAll('.main-branch-editor').forEach(mainBlockEditor => {
+                    const baseHue = Math.floor(currentHue * 360);
+                    const mainDir = mainBlockEditor.querySelector('.toggle-switch').dataset.dir || 'rtl';
+                    const mainTitle = mainBlockEditor.querySelector('.title-input').value.trim();
+                    const mainContentHtml = generateContentSectionsHtml(mainBlockEditor.querySelector('.dynamic-content-container'));
+                    let subBranchesHtml = '';
+                    mainBlockEditor.querySelectorAll('.sub-branch-editor').forEach(subBranchEditor => {
+                        const subDir = subBranchEditor.querySelector('.toggle-switch').dataset.dir || 'rtl';
+                        const subTitle = subBranchEditor.querySelector('.title-input').value.trim();
+                        const subContentHtml = generateContentSectionsHtml(subBranchEditor.querySelector('.dynamic-content-container'));
+                        if (subTitle || subContentHtml) {
+                            const subTitleHtml = subTitle ? `<h5 class="description-title">${subTitle}</h5>` : '';
+                            const subBranchBgColor = `hsl(${baseHue}, 80%, ${94 + Math.floor(Math.random() * 4)}%)`;
+                            subBranchesHtml += `<div class="sub-branch-wrapper" dir="${subDir}" style="background-color: ${subBranchBgColor};">${subTitleHtml}${subContentHtml}</div>`;
+                        }
+                    });
+                    if (mainTitle || mainContentHtml || subBranchesHtml) {
+                        const mainTitleHtml = mainTitle ? `<h4 class="description-title">${mainTitle}</h4>` : '';
+                        const subBranchesSectionTitleText = mainBlockEditor.querySelector('.sub-branches-title-input').value.trim();
+                        const subBranchesSectionTitle = subBranchesSectionTitleText ? `<h5 class="sub-branches-section-title">${subBranchesSectionTitleText}</h5>` : '';
+                        const subBranchesSection = subBranchesHtml ? `<div class="sub-branches-section">${subBranchesSectionTitle}${subBranchesHtml}</div>` : '';
+                        const mainBgColor = `hsl(${baseHue}, 100%, 98%)`;
+                        finalHtml += `<div class="main-wrapper" dir="${mainDir}" style="background-color: ${mainBgColor};">${mainTitleHtml}${mainContentHtml}${subBranchesSection}</div>`;
+                    }
+                    currentHue = (currentHue + GOLDEN_RATIO) % 1;
+                });
+                const footerUserInput = document.getElementById('footer-text-input').value.trim();
+                let footerHtml = footerUserInput ? `<footer class="output-footer"><p>${footerUserInput}</p><p class="credits">ساخته شده با CodeGenius</p></footer>` : '';
+                const outputCodeEl = document.getElementById('output-code');
+                outputCodeEl.value = getFinalHtmlTemplate(finalHtml.trim(), footerHtml);
+                const btn = e.target.closest('button');
+                if(!outputCodeEl.value) return;
+                outputCodeEl.select();
+                document.execCommand('copy');
+                btn.innerHTML = 'کد تولید و کپی شد!';
+                setTimeout(() => { btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>تولید و کپی کد`; }, 2000);
+            });
+            function getFinalHtmlTemplate(content, footer) {
+                const minifiedCSS = `*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;background-color:#0f172a;color:#1f2937;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}.container{background-color:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.08);max-width:800px;width:90%}.main-wrapper{padding:20px;margin-bottom:25px;border-radius:10px;border:1px solid #e5e7eb}.main-wrapper:last-child{margin-bottom:0}.description-title{font-size:1.2rem;font-weight:600;color:#1f2937;margin-bottom:15px}.description-content{color:#374151;line-height:1.7;word-wrap:break-word;margin-bottom:15px}.description-content p,.description-content ul,.description-content ol{margin-bottom:10px}.description-content img{max-width:100%;height:auto;border-radius:4px}.code-block{background-color:#f8f9fa;border:1px solid #e5e7eb;border-radius:8px;padding:15px;overflow:hidden;direction:ltr;text-align:left;position:relative;margin-top:15px;margin-bottom:15px}.copy-button{position:absolute;top:10px;right:10px;background-color:#6c757d;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:.85rem;cursor:pointer;opacity:.7;transition:opacity .2s ease,background-color .2s ease}.copy-button:hover{opacity:1}.copy-button.copied{background-color:#198754}.copy-button:disabled{cursor:default}.code-block pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;font-size:.9rem;color:#1f2937;overflow-x:auto;padding-top:10px;background:transparent!important}.sub-branches-section{margin-top:25px;padding:20px;border-top:3px solid #e5e7eb;background-color:#f9fafb;border-radius:8px}.sub-branches-section-title{font-size:1.1rem;margin-bottom:20px;color:#374151}h5.description-title{font-size:1rem;font-weight:600}.sub-branch-wrapper{padding:20px;border-radius:8px;margin-bottom:15px;border:1px solid #e5e7eb}.sub-branch-wrapper:last-child{margin-bottom:0}.output-footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #e5e7eb;font-size:.85rem;color:#6b7280}.output-footer p{margin:0}.output-footer .credits{font-size:.8rem;margin-top:5px}`;
+                const minifiedJS = `document.querySelectorAll(".copy-button").forEach(e=>{const t=e.innerText;e.addEventListener("click",()=>{const o=e.closest(".code-block").querySelector("pre code");if(!o)return;const c=o.innerText;navigator.clipboard?navigator.clipboard.writeText(c).then(()=>{e.innerText="کپی شد!",e.classList.add("copied"),setTimeout(()=>{e.innerText=t,e.classList.remove("copied")},2e3)}):console.error("Clipboard API not available")})});`;
+                return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>نمایش کد</title><style>${minifiedCSS}</style></head><body><div class="container">${content}${footer}</div><script>${minifiedJS}<\/script></body></html>`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -255,7 +255,7 @@
                     currentHue = (currentHue + GOLDEN_RATIO) % 1;
                 });
                 const footerUserInput = document.getElementById('footer-text-input').value.trim();
-                let footerHtml = footerUserInput ? `<footer class="output-footer"><p>${footerUserInput}</p><a href='https://github.com/hiuuu/DOCGenius/edit/main/preview/index.html'><p class="credits">ساخته شده با DOCGenius</p></a></footer>` : '';
+                let footerHtml = footerUserInput ? `<footer class="output-footer"><p>${footerUserInput}</p>><a href='https://hiuuu.github.io/DOCGenius/preview/'><p class="credits">ساخته شده با DOCGenius</p></a></footer>` : '';
                 const outputCodeEl = document.getElementById('output-code');
                 outputCodeEl.value = getFinalHtmlTemplate(finalHtml.trim(), footerHtml);
                 const btn = e.target.closest('button');

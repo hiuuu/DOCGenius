@@ -8,9 +8,6 @@
 
 ---
 
-![DOCGenius Interface](https://via.placeholder.com/900x450.png?text=Replace+this+with+a+GIF+of+the+Generator+UI)
-
----
 
 ## ✨ ویژگی‌های کلیدی
 

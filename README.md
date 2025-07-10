@@ -10,8 +10,6 @@
 
 ![DOCGenius Interface](https://via.placeholder.com/900x450.png?text=Replace+this+with+a+GIF+of+the+Generator+UI)
 
-*یک تصویر متحرک (GIF) از رابط کاربری جنریتور در اینجا قرار دهید.*
-
 ---
 
 ## ✨ ویژگی‌های کلیدی
